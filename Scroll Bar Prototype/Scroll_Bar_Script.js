@@ -1,27 +1,36 @@
-//let x = $('#fader');
+// uses jQuery .load method instead of vue to load the one appropriate right panel with respect to paragraph on left panel
+// right panels stored in separate html files which are called into main html as appropriate
+// previous right panel is unloaded by overwriting right div
+
+// import right div as jQuery object
 let loadspace = $('#loadspace');
+console.log(loadspace);
+
+// declare global variables needed
 let n=0;
 let i;
 let x=0;
 let current=0;
 
-console.log(loadspace);
+// load first screen when web page first accessed
 loadspace.load("test_div_" + "p" + current + ".html");
 
+// calculate number of paragraphs in left div
 $("p").each(function () {
     n++
 });
-
 console.log("n: "+n);
 
 
-
+// function for creating event handlers to listen for respective paragraphs reaching (and leaving) top of screen in view
+// then load respective right panel (overwriting previous screen) when a new paragraph comes to top of screen
+// hence only one right panel loaded at a time
 $(document).scroll(function () {
-
+    // variable for measuring screen position with respect to scroll
     let y = $(this).scrollTop();
 
+    // function to return and assign number of paragraph at top of screen to x
     function handleElement(para) {
-
 
         // Show element after user scrolls past
         // the top edge of its parent
@@ -32,12 +41,13 @@ $(document).scroll(function () {
             x=para;
             console.log("para: "+para);
         };
-
     };
 
+    // iteration of function for all paragraphs
     for(i=0; i<=n; i++)
     handleElement(i);
 
+    // if x changes then old right panel changed to appropriate new right panel
     if(current!==x) {
         console.log("x: "+x);
         console.log("current: "+current);
@@ -48,7 +58,7 @@ $(document).scroll(function () {
 
 });
 
-
+// legacy code - had issues with reloading right div for every scroll - fixed in above code
 
 /*
 
