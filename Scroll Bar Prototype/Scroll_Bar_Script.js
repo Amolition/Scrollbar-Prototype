@@ -1,3 +1,5 @@
+// Code for loading and unloading right panel as left panel is scrolled
+
 // uses jQuery .load method instead of vue to load the one appropriate right panel with respect to paragraph on left panel
 // right panels stored in separate html files which are called into main html as appropriate
 // previous right panel is unloaded by overwriting right div
@@ -21,21 +23,20 @@ $("p").each(function () {
 });
 console.log("n: "+n);
 
-
 // function for creating event handlers to listen for respective paragraphs reaching (and leaving) top of screen in view
 // then load respective right panel (overwriting previous screen) when a new paragraph comes to top of screen
 // hence only one right panel loaded at a time
 $(document).scroll(function () {
     // variable for measuring screen position with respect to scroll
-    let y = $(this).scrollTop();
+    let y = $(this).scrollTop()+ $("nav").outerHeight();
 
     // function to return and assign number of paragraph at top of screen to x
     function handleElement(para) {
 
-        // Show element after user scrolls past
-        // the top edge of its parent
-        let top = $("#"+"p"+para).offset().top;
-        let bottom = top + $("#"+"p"+para).outerHeight();
+        // update x if user scrolls past
+        // the top edge of its corresponding paragraph on left side
+        let top = $("#"+"ph"+para).offset().top;
+        let bottom = top + $("#"+"lc"+para).outerHeight();
         if (y > top && y < bottom) {
             //$(x).fadeIn();
             x=para;
@@ -47,13 +48,46 @@ $(document).scroll(function () {
     for(i=0; i<=n; i++)
     handleElement(i);
 
-    // if x changes then old right panel changed to appropriate new right panel
+
     if(current!==x) {
+
+        //stick appropriate heading on left hand panel
+        if(x!==0) {
+
+            //label old heading to unstick
+            let unstick = $("#s"+(current));
+            current=x;
+            //label new heading to stick
+            let stick = $("#s"+(x));
+
+            unstick.css({
+                position: "static"
+            });
+            stick.css({
+                position: "fixed",
+                top: "12vh",
+                width: "33vw"
+            });
+        }
+        if(x===0) {
+
+            //label old heading to unstick
+            let unstick = $("#s"+(current));
+            current=x;
+
+            unstick.css({
+                position: "static"
+            });
+        }
+
+        // if x changes then old right panel changed to appropriate new right panel
         console.log("x: "+x);
         console.log("current: "+current);
-        current=x;
+        $("#loadspace").fadeOut(600, function() {loadspace.load("test_div_" + "p" + current + ".html");});
+
         //loadspace.html("");
-        loadspace.load("test_div_" + "p" + current + ".html");
+        //loadspace.load("test_div_" + "p" + current + ".html");
+        $("#loadspace").fadeIn(600);
     }
 
 });
